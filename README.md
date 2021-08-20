@@ -14,6 +14,8 @@ cd simulator
 scons
 ```
 
+The executable is `simulator/bin/cache` which can be run with individual configurations.
+
 ### Generate Simulator Configurations
 
 The easiest way to generate workloads is using the `genConfigs.py` script in `run-scripts`.
