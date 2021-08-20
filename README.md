@@ -80,7 +80,7 @@ The Kangaroo flash cache code is mostly contained in `cachelib/navy/kangaroo`.
 To build the code:
 
 ```
-./contrib/build.sh -d -j -v
+./contrib/build.sh -j -v
 ```
 
 To run the flash experiments, you will need a flash drive formatted as a raw block device. The Cachelib engine has support for reading device-level write amplification, but it might not support your specific device. You can still get application-level write amplification numbers.
