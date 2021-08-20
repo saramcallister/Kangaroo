@@ -1,6 +1,6 @@
 # Kangaroo
 
-This repository holds all of the simulation and graphing code for "Kangaroo: Caching Billions of Tiny Object on Flash", which is to appear at SOSP 2021. See the Kangaroo Flash Experiments to find code links and detailed run instructions for the on-flash experiment code, which is implemented as another flash cache in Facebook's CacheLib engine and will be fully open-sourced by September 3rd at the latest (see "The CacheLib Caching Engine: Design and Experiences at Scale" in OSDI 2020 for more details on CacheLib).
+Welcome! This repository holds all of the simulation and graphing code for "Kangaroo: Caching Billions of Tiny Object on Flash", which is to appear at SOSP 2021. See the Kangaroo Flash Experiments to find code links and detailed run instructions for the on-flash experiment code, which is implemented as another flash cache in Facebook's CacheLib engine.
 
 ## Simulation Code 
 
@@ -16,7 +16,7 @@ scons
 
 The executable is `simulator/bin/cache` which can be run with individual configurations.
 
-### Generate Simulator Configurations
+#### Generate Simulator Configurations
 
 The easiest way to generate workloads is using the `genConfigs.py` script in `run-scripts`.
 
@@ -40,7 +40,7 @@ The configs will automatically be generated in local `run-scripts/configs` direc
 
 Note: Python 3 is required to run python code.
 
-### Run Simulator
+#### Run Simulator
 
 To run the generated configurations, use `run-scripts/runLocal.py`.
 
@@ -50,7 +50,7 @@ To run the generated configurations, use `run-scripts/runLocal.py`.
 
 Each simulator instance is single threaded. Multiple configs can be run at once using the jobs parameter.
 
-### Adding Parsing Code
+#### Adding Parsing Code
 
 One of the most common code additions is adding parsers for new trace formats. To add a new parser,
 1) Write a parser that inherits from Parser (in `simulator/parsers/parser.hpp`). Examples can be found in the `parsers` directory.
@@ -87,3 +87,8 @@ sudo ./bin/cachebench_bin --json-test-config ../cachelib/cachebench/test_configs
 ```
 
 ## Graphing
+
+All the graphing scripts are in the `graph-scripts` directory. With the exception of `miss_ratio_kangaroo_params.py` which can create the Kangaroo breakdown graphs and the headline results graph, these scriptsare run using `./{SCRIPT} {WORKLOAD} output-files`. For `miss_ratio_kangaroo_params.py`, the output files or results are specified in the script.
+
+To change the graphing parameters (scaling, dram limits, device write amplification, etc) or add parameters for a new trace, 
+you can modify or add `graph-scripts/paramaters`.
