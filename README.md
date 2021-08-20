@@ -4,7 +4,7 @@ Welcome! This repository holds all of the simulation and graphing code for "Kang
 
 ## Simulation Code 
 
-### Build Instructions
+#### Build Instructions
 
 Install SCons (https://scons.org/). Recommended install using python:
 
@@ -59,15 +59,15 @@ One of the most common code additions is adding parsers for new trace formats. T
 
 ## Kangaroo Flash Experiments
 
-Kangaroo's full on-flash implementation and the Log-structured code evaluated in the paper exist at https://github.com/saramcallister/CacheLib.
+Kangaroo's full on-flash implementation and the Log-structured code evaluated in the paper exist at https://github.com/saramcallister/CacheLib (Note: this repository will become public when Facebook's CacheLib repository becomes public).
 
-To look at the code:
-
+To look at the Kangaroo code:
 ```
 git clone https://github.com/saramcallister/CacheLib.git
 git checkout artifact-eval-kangaroo # for Kangaroo and SA code
-git checkout artifact-eval-log-only # for LS code, need to be on this branch to run this comparison
+git checkout artifact-eval-log-only # for LS code, need to be on this branch to run this comparison 
 ```
+The Kangaroo flash cache code is mostly contained in `cachelib/navy/kangaroo`.
 
 To build the code:
 
@@ -75,16 +75,102 @@ To build the code:
 ./contrib/build.sh -d -j -v
 ```
 
-To run the main experiments from the paper:
+To run the flash experiments, you will need a flash drive formatted as a raw block device. The Cachelib engine has support for reading device-level write amplification, but it might not support your specific device. You can still get application-level write amplification numbers.
+
+To run an experiment, create an appropriate json config (examples below) and run:
+```
+sudo ./build-cachelib/cachebench/cachebench --json-test-config {CONFIG} --progress 300 --progress_stats_file {OUTFILE}
+```
+This will write experiment statistics from CacheLib to the specified output file every 300 seconds. 
+
+#### Example SA JSON configuration file
 
 ```
-# Kangaroo
-sudo ./bin/cachebench_bin --json-test-config ../cachelib/cachebench/test_configs/kangaroo_internal/kangaroo_log.json --progress 300 —progress_stats_file kangaroo-exp.out
-# SA
-sudo ./bin/cachebench_bin --json-test-config ../cachelib/cachebench/test_configs/kangaroo_internal/cachelib.json --progress 300 --progress_stats_file set-associative.out
-# LS
-sudo ./bin/cachebench_bin --json-test-config ../cachelib/cachebench/test_configs/kangaroo_internal/log_only.json --progress 300 --progress_stats_file log-structured.out   
+{
+  "cache_config" : {
+    "cacheSizeMB" : 16000,
+    "dipperAsyncThreads": 128,
+    "navyReaderThreads": 64,
+    "dipperBackend": "navy_dipper",
+    "dipperDevicePath": "/dev/nvme0n1",
+    "writeAmpDeviceList": ["nvme0n1"],
+    "navyAdmissionProb": 0.50,
+    "dipperNavyBigHashBucketSize": 4096,
+    "dipperNavyBigHashSizePct": 99,
+    "dipperNavyBlock": 4096,
+    "dipperNavyParcelMemoryMB": 6048,
+    "dipperNavySizeClasses": [
+      4096
+    ],
+    "dipperSizeMB": 1450000,
+    "dipperUseDirectIO": true,
+    "enableChainedItem": true,
+    "htBucketPower": 26,
+    "moveOnSlabRelease": false,
+    "poolRebalanceIntervalSec" : 20,
+    "truncateItemToOriginalAllocSizeInNvm" : true
+  },
+  "test_config" :
+    {
+      "prepopulateCache" : false,
+      "enableLookaside" : true,
+      "numOps" : 1000000000,
+      "numThreads" : 30,
+      "traceFileName" : "/traces/facebook/final.csv",
+      "generator" : "replay"
+    }
+
+}
 ```
+
+#### Example Kangaroo JSON configuration file
+
+```
+{
+  "cache_config" : {
+    "cacheSizeMB" : 16000,
+    "dipperAsyncThreads": 128,
+    "navyReaderThreads": 64,
+    "dipperBackend": "navy_dipper",
+    "dipperDevicePath": "/dev/nvme0n1",
+    "writeAmpDeviceList": ["nvme0n1"],
+    "navyAdmissionProb": 1.0,
+    "dipperNavyBigHashBucketSize": 4096,
+    "dipperNavyKangarooBucketSize": 4096,
+    "dipperNavyBigHashSizePct": 0,
+    "dipperNavyKangarooSizePct": 99,
+    "dipperNavyKangarooLogSizePct": 5,
+    "dipperNavyKangarooLogThreshold": 2,
+    "dipperNavyKangarooLogPhysicalPartitions": 64,
+    "dipperNavyKangarooLogIndexPerPhysicalPartitions": 65536,
+    "dipperNavyKangarooLogAvgSmallObjectSize": 100,
+    "dipperNavyBlock": 4096,
+    "dipperNavyParcelMemoryMB": 6048,
+    "dipperNavySizeClasses": [
+      4096
+    ],
+    "dipperSizeMB": 1788400,
+    "dipperUseDirectIO": true,
+    "enableChainedItem": true,
+    "htBucketPower": 26,
+    "moveOnSlabRelease": false,
+    "poolRebalanceIntervalSec" : 20,
+    "truncateItemToOriginalAllocSizeInNvm" : true
+  },
+  "test_config" :
+    {
+      "prepopulateCache" : false,
+      "enableLookaside" : true,
+      "numOps" : 1000000000,
+      "numThreads" : 30,
+      "traceFileName" : "/traces/facebook/final.csv",
+      "generator" : "replay"
+    }
+
+}
+```
+
+For LS, on the correct branch discussed above, you should use the Kangaroo example as a baseline, but set `dipperNavyKangarooLogSizePct` to 100.
 
 ## Graphing
 
