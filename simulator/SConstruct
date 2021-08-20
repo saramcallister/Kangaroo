@@ -1,0 +1,14 @@
+# Libraries
+libraries = ['config++']
+cppFlags = ['-Wall', '-Werror', '-march=native', '-mcmodel=medium', '-fPIC', '-ffast-math', '-funroll-loops']
+cxxFlags = ['-std=c++14', '-g', '-O3']
+cppPath = ['.']
+
+# Setup Environment
+env = Environment()
+env.Append(LIBS = libraries)
+env.Append(CPPFLAGS = cppFlags)
+env.Append(CXXFLAGS = cxxFlags)
+env.Append(CPPPATH = cppPath)
+
+env.SConscript('SConscript', {'env': env}, variant_dir='bin', duplicate=0)

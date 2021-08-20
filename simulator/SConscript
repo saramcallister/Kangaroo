@@ -1,0 +1,18 @@
+import os
+
+Import('env')
+
+# Find subdirs
+dir_list = ['.']
+dir_list.append('stats')
+dir_list.append('admission')
+dir_list.append('parsers')
+dir_list.append('caches')
+
+# Add all cpp files in subdirs
+files = []
+for dir in dir_list:
+    files.append(Glob('%s/*.cpp' % dir))
+
+env.Program('cache', files)
+env.SConscript('lib/SConscript', {'env': env}, variant_dir='', duplicate=0)
