@@ -29,7 +29,7 @@ For example, if you want to create a Kangaroo simulation experiment using differ
 and pre-log random admission percentages run with a Zipf trace (alpha=0.9) you could run:
 
 ```
-./genConfigs.py kangaroo-zipf --log 1 3 5 7 9 --rrip 3 --zipf 0.9 --readmission 1 --mem-size-MB 5 --flash-size-MB 20 --rotating-kb 256 --multiple-admission-policies --pre-log-admission .8 .9 1 --threshold 2
+./genConfigs.py kangaroo-zipf --log 1 3 5 7 9 --rrip 3 --zipf 0.9 --readmission 1 --mem-size-MB 5 --flash-size-MB 20 --rotating-kb 256 --multiple-admission-policies --pre-log-random .8 .9 1 --threshold 2
 ```
 
 For SA, remove the `--log`, `--rrip`, `--threshold`, `--multiple-admission-policies`, and `--rotating-kb` parameters and change `--pre-log-admission` to `--pre-set-admission` for a random admission policy.

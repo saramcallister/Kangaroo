@@ -413,7 +413,7 @@ def arg_parser():
             nargs='+', metavar='size', help='defaults to correct size for tao') 
     parser.add_argument('--mem-size-MB', dest='mem_size_mb', type=int, 
             nargs='+', metavar='size', help='defaults to correct size for tao') 
-    parser.add_argument('--directory', action='store_false', help=f'generate config in specified directory')
+    parser.add_argument('--directory', action='store_true', help=f'generate config in specified directory')
     parser.add_argument('--stats-interval', help='10**(STATS_INTERVAL)', type=int)
 
     traces = parser.add_argument_group('trace types (at least one required)')
