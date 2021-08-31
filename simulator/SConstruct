@@ -1,6 +1,6 @@
 # Libraries
 libraries = ['config++']
-cppFlags = ['-Wall', '-Werror', '-march=native', '-mcmodel=medium', '-fPIC', '-ffast-math', '-funroll-loops']
+cppFlags = ['-Wall', '-march=native', '-mcmodel=medium', '-fPIC', '-ffast-math', '-funroll-loops']
 cxxFlags = ['-std=c++14', '-g', '-O3']
 cppPath = ['.']
 
