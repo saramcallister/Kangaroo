@@ -91,6 +91,9 @@ sudo ./build-cachelib/cachebench/cachebench --json-test-config {CONFIG} --progre
 ```
 This will write experiment statistics from CacheLib to the specified output file every 300 seconds. 
 
+Sample configuartions for a file are below. To run with a generated trace, see examples in `cachelib/cachebench/test_configs/kangaroo`
+within the CacheLib-Kangaroo fork. In the directory, there is also a text file that explains important parameters.
+
 #### Example SA JSON configuration file
 
 ```
