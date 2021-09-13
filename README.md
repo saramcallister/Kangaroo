@@ -67,121 +67,36 @@ One of the most common code additions is adding parsers for new trace formats. T
 
 ## Kangaroo Flash Experiments
 
-Kangaroo's full on-flash implementation and the Log-structured code evaluated in the paper exist at https://github.com/saramcallister/CacheLib (Note: this repository will become public when Facebook's CacheLib repository becomes public).
+Kangaroo's full on-flash implementation and the Log-structured code evaluated in the paper exist at https://github.com/saramcallister/CacheLib-1
 
 To look at the Kangaroo code:
 ```
-git clone https://github.com/saramcallister/CacheLib.git
-git checkout artifact-eval-kangaroo # for Kangaroo and SA code
-git checkout artifact-eval-log-only # for LS code, need to be on this branch to run this comparison 
+git clone git@github.com:saramcallister/CacheLib-1.git
+cd CacheLib-1
+
+git checkout artifact-eval-kangaroo-upstream # for Kangaroo and SA code
+git checkout artifact-eval-log-only-upstream # for LS code, need to be on this branch to run this comparison 
 ```
-The Kangaroo flash cache code is mostly contained in `cachelib/navy/kangaroo`.
+The Kangaroo flash cache code is mostly contained in `cachelib/navy/kangaroo`. 
+You can also look at the pull request to the main [CacheLib repository](https://github.com/facebook/CacheLib).
 
 To build the code:
 
 ```
-./contrib/build.sh -j -v
+./contrib/build.sh -j -v -d
 ```
 
 To run the flash experiments, you will need a flash drive formatted as a raw block device. The Cachelib engine has support for reading device-level write amplification, but it might not support your specific device. You can still get application-level write amplification numbers.
 
 To run an experiment, create an appropriate json config (examples below) and run:
 ```
-sudo ./build-cachelib/cachebench/cachebench --json-test-config {CONFIG} --progress 300 --progress_stats_file {OUTFILE}
+sudo ./opt/cachelib/bin/cachebench --json-test-config {CONFIG} --progress 300 --progress_stats_file {OUTFILE}
 ```
 This will write experiment statistics from CacheLib to the specified output file every 300 seconds. 
 
-Sample configuartions for a file are below. To run with a generated trace, see examples in `cachelib/cachebench/test_configs/kangaroo`
-within the CacheLib-Kangaroo fork. In the directory, there is also a text file that explains important parameters.
-
-#### Example SA JSON configuration file
-
-```
-{
-  "cache_config" : {
-    "cacheSizeMB" : 16000,
-    "dipperAsyncThreads": 128,
-    "navyReaderThreads": 64,
-    "dipperBackend": "navy_dipper",
-    "dipperDevicePath": "/dev/nvme0n1",
-    "writeAmpDeviceList": ["nvme0n1"],
-    "navyAdmissionProb": 0.50,
-    "dipperNavyBigHashBucketSize": 4096,
-    "dipperNavyBigHashSizePct": 99,
-    "dipperNavyBlock": 4096,
-    "dipperNavyParcelMemoryMB": 6048,
-    "dipperNavySizeClasses": [
-      4096
-    ],
-    "dipperSizeMB": 1450000,
-    "dipperUseDirectIO": true,
-    "enableChainedItem": true,
-    "htBucketPower": 26,
-    "moveOnSlabRelease": false,
-    "poolRebalanceIntervalSec" : 20,
-    "truncateItemToOriginalAllocSizeInNvm" : true
-  },
-  "test_config" :
-    {
-      "prepopulateCache" : false,
-      "enableLookaside" : true,
-      "numOps" : 1000000000,
-      "numThreads" : 30,
-      "traceFileName" : "/traces/facebook/final.csv",
-      "generator" : "replay"
-    }
-
-}
-```
-
-#### Example Kangaroo JSON configuration file
-
-```
-{
-  "cache_config" : {
-    "cacheSizeMB" : 16000,
-    "dipperAsyncThreads": 128,
-    "navyReaderThreads": 64,
-    "dipperBackend": "navy_dipper",
-    "dipperDevicePath": "/dev/nvme0n1",
-    "writeAmpDeviceList": ["nvme0n1"],
-    "navyAdmissionProb": 1.0,
-    "dipperNavyBigHashBucketSize": 4096,
-    "dipperNavyKangarooBucketSize": 4096,
-    "dipperNavyBigHashSizePct": 0,
-    "dipperNavyKangarooSizePct": 99,
-    "dipperNavyKangarooLogSizePct": 5,
-    "dipperNavyKangarooLogThreshold": 2,
-    "dipperNavyKangarooLogPhysicalPartitions": 64,
-    "dipperNavyKangarooLogIndexPerPhysicalPartitions": 65536,
-    "dipperNavyKangarooLogAvgSmallObjectSize": 100,
-    "dipperNavyBlock": 4096,
-    "dipperNavyParcelMemoryMB": 6048,
-    "dipperNavySizeClasses": [
-      4096
-    ],
-    "dipperSizeMB": 1788400,
-    "dipperUseDirectIO": true,
-    "enableChainedItem": true,
-    "htBucketPower": 26,
-    "moveOnSlabRelease": false,
-    "poolRebalanceIntervalSec" : 20,
-    "truncateItemToOriginalAllocSizeInNvm" : true
-  },
-  "test_config" :
-    {
-      "prepopulateCache" : false,
-      "enableLookaside" : true,
-      "numOps" : 1000000000,
-      "numThreads" : 30,
-      "traceFileName" : "/traces/facebook/final.csv",
-      "generator" : "replay"
-    }
-
-}
-```
-
-For LS, on the correct branch discussed above, you should use the Kangaroo example as a baseline, but set `dipperNavyKangarooLogSizePct` to 100.
+Sample configuartions are at `cachelib/cachebench/test_configs/kangaroo`
+within the CacheLib-Kangaroo fork. In the directory, there is also a text file that explains important parameters (more general parameters are available at https://cachelib.org/).
+The appropriate configurations for *Kangaroo* and *LS* are only in the correct branch.
 
 ## Graphing
 
